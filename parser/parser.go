@@ -5,6 +5,7 @@ import (
 	"monkey/ast"
 	"monkey/lexer"
 	"monkey/token"
+	"strconv"
 )
 
 type (
@@ -41,7 +42,18 @@ func New(l *lexer.Lexer) *Parser {
 	}
 	p.nextToken()
 	p.nextToken()
+	p.prefixParseFns = make(map[token.TokenType]prefixParseFn)
+	p.registerPrefix(token.IDENT, p.parseIdentifier)
+	p.registerPrefix(token.INT,p.parseIntegerLiteral)
+	p.registerPrefix(token.BANG,p.parsePrefixExpression)
+	p.registerPrefix(token.MINUS,p.parsePrefixExpression)
+
 	return p
+}
+
+// parseIdentifier ...
+func (p *Parser) parseIdentifier() ast.Expression {
+	return &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 }
 
 // registerPrefix ...
@@ -116,6 +128,7 @@ func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
 }
 
 // parseExpressionStatement ...
+// "(a+b);"
 func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
 	stmt := &ast.ExpressionStatement{Token: p.curToken}
 	stmt.Expression = p.parseExpression(LOWEST)
@@ -128,11 +141,44 @@ func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
 // parseExpression ...
 func (p *Parser) parseExpression(precedence int) ast.Expression {
 	prefix := p.prefixParseFns[p.curToken.Type]
-	if prefix == nil{
+	if prefix == nil {
+		p.noPrefixParseFnError(p.curToken.Type)
 		return nil
 	}
 	leftExp := prefix()
 	return leftExp
+}
+
+// parseIntegerLiteral ...
+func (p *Parser) parseIntegerLiteral() ast.Expression {
+	lit := &ast.IntegerLiteral{Token: p.curToken}
+	value, err := strconv.ParseInt(p.curToken.Literal, 0, 64)
+	if err != nil {
+		msg := fmt.Sprintf("conld not parse %q as integer", p.curToken.Literal)
+		p.errors = append(p.errors, msg)
+		return nil
+	}
+
+	lit.Value = value
+	return lit
+}
+
+// parsePrefixExpression ...
+// '!5' '-5'
+func (p *Parser) parsePrefixExpression() ast.Expression {
+	expression := &ast.PrefixExpression{
+		Token :p.curToken,
+		Operator: p.curToken.Literal,
+	}
+	p.nextToken()
+	expression.Right = p.parseExpression(PREFIX)
+	return expression
+}
+
+// noPrefixParseFnError ...
+func (p *Parser) noPrefixParseFnError(t token.TokenType)  {
+	msg :=fmt.Sprintf("no prefix parse function for %s found",t)
+	p.errors = append(p.errors, msg)
 }
 
 // curTokenIs 当前的token 是

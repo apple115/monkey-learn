@@ -32,6 +32,8 @@ const (
 	RPAREN = ")"
 	LBRACE = "{"
 	RBRACE = "}"
+	LBRACKET = "[" //添加数组支持
+	RBRACKET = "]"
 
 	//关键字
 	FUNCTION = "FUNCTION"

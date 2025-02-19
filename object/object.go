@@ -21,6 +21,7 @@ const (
 	BUILTIN_OBJ      = "BUILTIN"
 	ARRAY_OBJ        = "ARRAY"
 	HASH_OBJ         = "HASH"
+	QUOTE_OBJ        = "QUOTE"
 )
 
 type Object interface {
@@ -70,10 +71,9 @@ func (i *Boolean) Type() ObjectType {
 	return BOOLEAN_OBJ
 }
 
-
 // HashKey ...
 func (b *Boolean) HashKey() HashKey {
-	if b.HashValue == nil{
+	if b.HashValue == nil {
 		var value uint64
 		if b.Value {
 			value = 1
@@ -228,4 +228,18 @@ func (h *Hash) Inspect() string {
 	out.WriteString("}")
 
 	return out.String()
+}
+
+type Quote struct {
+	Node ast.Node
+}
+
+// Type ...
+func (q *Quote) Type() ObjectType {
+	return QUOTE_OBJ
+}
+
+// Inspect ...
+func (q *Quote) Inspect() string {
+	return "QUOTE(" + q.Node.String() + ")"
 }

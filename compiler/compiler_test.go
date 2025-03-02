@@ -91,7 +91,7 @@ func concatInstructions(s []code.Instructions) code.Instructions {
 
 // 测试常量
 func testConstants(
-	t *testing.T,
+	_ *testing.T,
 	expected []interface{},
 	actual []object.Object,
 ) error {
@@ -120,3 +120,5 @@ func testIntegerObject(expected int64, actual object.Object) error {
 	}
 	return nil
 }
+
+

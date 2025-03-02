@@ -1,36 +1,39 @@
 package compiler
 
 import (
-	"go/constant"
+	"monkey/ast"
 	"monkey/code"
+	"monkey/object"
 )
 
-type Compiler struct{
+type Compiler struct {
+	//操作码
 	instructions code.Instructions
+	//常量池
 	constants []object.Object
 }
 
 func New() *Compiler {
 	return &Compiler{
 		instructions: code.Instructions{},
-		constants: []object.Object{},
+		constants:    []object.Object{},
 	}
 }
 
 // Compile ...
-func (c *Compiler) Compile(node ast.Node)error  {
+func (c *Compiler) Compile(node ast.Node) error {
 	return nil
 }
 
 // Bytecode ...
 func (c *Compiler) Bytecode() *Bytecode {
 	return &Bytecode{
-		Instruction: c.instructions,
-		Constants: c.constants
+		Instructions: c.instructions,
+		Constants:    c.constants,
 	}
 }
 
-type Bytecode struct{
+type Bytecode struct {
 	Instructions code.Instructions
-	Constants []object.Object
+	Constants    []object.Object
 }

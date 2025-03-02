@@ -2,13 +2,12 @@ package compiler
 
 import (
 	"fmt"
+	"monkey/ast"
 	"monkey/code"
+	"monkey/lexer"
+	"monkey/object"
+	"monkey/parser"
 	"testing"
-
-	"github.com/gobwas/glob/syntax/lexer"
-	"github.com/gomarkdown/markdown/parser"
-	"github.com/zeromicro/go-zero/tools/goctl/pkg/parser/api/parser"
-	"golang.org/x/tools/go/expect"
 )
 
 type compilerTestCase struct {
@@ -29,7 +28,6 @@ func TestIntergerArithmetic(t *testing.T) {
 		},
 	}
 	runCompilerTests(t, tests)
-
 }
 
 // runCompilerTests ...
@@ -45,7 +43,7 @@ func runCompilerTests(t *testing.T, tests []compilerTestCase) {
 		}
 
 		bytecode := compiler.Bytecode()
-		err := testInstructions(tt.expectedInstructions, bytecode.Instructions)
+		err = testInstructions(tt.expectedInstructions, bytecode.Instructions)
 		if err != nil {
 			t.Fatalf("testInstructions failed:%s", err)
 		}
@@ -58,7 +56,7 @@ func runCompilerTests(t *testing.T, tests []compilerTestCase) {
 
 // parse ...
 func parse(input string) *ast.Program {
-	l := lexer.New(intput)
+	l := lexer.New(input)
 	p := parser.New(l)
 	return p.ParseProgram()
 }
@@ -74,7 +72,6 @@ func testInstructions(
 	}
 
 	for i, ins := range concatted {
-
 		if actual[i] != ins {
 			return fmt.Errorf("wrong instruction at %d.\nwant=%q\ngot =%q",
 				i, concatted, actual)
@@ -83,6 +80,7 @@ func testInstructions(
 	return nil
 }
 
+// 一系列指令拼接
 func concatInstructions(s []code.Instructions) code.Instructions {
 	out := code.Instructions{}
 	for _, ins := range s {
@@ -91,6 +89,7 @@ func concatInstructions(s []code.Instructions) code.Instructions {
 	return out
 }
 
+// 测试常量
 func testConstants(
 	t *testing.T,
 	expected []interface{},
@@ -111,15 +110,13 @@ func testConstants(
 	return nil
 }
 
-func testIntegerObject(expected int64,actual object.Object) error{
-	result,ok := actual.(*Object.Integer)
-	if !ok{
-		return fmt.Errorf("object is not Integer. got=%T (%+v)",actual,actual)
+func testIntegerObject(expected int64, actual object.Object) error {
+	result, ok := actual.(*object.Integer)
+	if !ok {
+		return fmt.Errorf("object is not Integer. got=%T (%+v)", actual, actual)
 	}
-	if result.Value != expected{
-		return fmt.Errorf("object has wrong value. got=%d,want=%d",result.Value,expected)
+	if result.Value != expected {
+		return fmt.Errorf("object has wrong value. got=%d,want=%d", result.Value, expected)
 	}
 	return nil
 }
-
-

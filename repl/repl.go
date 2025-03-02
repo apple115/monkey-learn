@@ -36,7 +36,7 @@ func Start(in io.Reader, out io.Writer) {
 
 		evaluator.DefineMacros(program, macroEnv)
 		expanded := evaluator.ExpandMacros(program, macroEnv)
-		io.WriteString(out,expanded.String())
+		io.WriteString(out, expanded.String())
 		io.WriteString(out, "\n")
 
 		evaluated := evaluator.Eval(expanded, env)

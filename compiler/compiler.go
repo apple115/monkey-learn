@@ -1,6 +1,7 @@
 package compiler
 
 import (
+	"fmt"
 	"monkey/ast"
 	"monkey/code"
 	"monkey/object"
@@ -45,6 +46,12 @@ func (c *Compiler) Compile(node ast.Node) error {
 		if err != nil {
 			return err
 		}
+		switch node.Operator{
+		case "+":
+		c.emit(code.OpAdd)
+		default:
+		return fmt.Errorf("unknown operator %s",node.Operator)
+		}
 	case *ast.IntegerLiteral:
 		//TOOD
 		integer := &object.Integer{Value: node.Value}
@@ -55,6 +62,7 @@ func (c *Compiler) Compile(node ast.Node) error {
 }
 
 // Bytecode ...
+// 返回一个包含编译器内部指令和常量的*Bytecode结构体指针
 func (c *Compiler) Bytecode() *Bytecode {
 	return &Bytecode{
 		Instructions: c.instructions,

@@ -14,6 +14,8 @@ type Opcode byte
 
 const (
 	OpConstant Opcode = iota
+	//OpAdd 是一个操作码，用于表示加法操作
+	OpAdd
 )
 
 // 定义：名字 操作符占用字符数
@@ -24,6 +26,7 @@ type Definition struct {
 
 var definitions = map[Opcode]*Definition{
 	OpConstant: {"OpConstant", []int{2}},
+	OpAdd:      {"OpAdd", []int{}},
 }
 
 // Lookup ...
@@ -36,7 +39,7 @@ func Lookup(op byte) (*Definition, error) {
 	return def, nil
 }
 
-// Make ...
+// Make 是一个函数，用于生成字节码指令
 func Make(op Opcode, operands ...int) []byte {
 	def, ok := definitions[op]
 	if !ok {
@@ -53,7 +56,6 @@ func Make(op Opcode, operands ...int) []byte {
 
 	for i, o := range operands {
 		width := def.OperandWidths[i]
-
 		switch width {
 		case 2:
 			// 如果操作数宽度为 2 字节，使用大端字节序将操作数转换为 16 位无符号整数并存储到字节切片中
@@ -90,6 +92,8 @@ func (ins Instructions) fmtInstructions(def *Definition, operands []int) string 
 	}
 
 	switch operandCount {
+	case 0:
+		return def.Name
 	case 1:
 		return fmt.Sprintf("%s %d", def.Name, operands[0])
 	}

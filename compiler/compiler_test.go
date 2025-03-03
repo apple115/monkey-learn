@@ -24,6 +24,7 @@ func TestIntergerArithmetic(t *testing.T) {
 			expectedInstructions: []code.Instructions{
 				code.Make(code.OpConstant, 0),
 				code.Make(code.OpConstant, 1),
+				code.Make(code.OpAdd),
 			},
 		},
 	}
@@ -120,5 +121,3 @@ func testIntegerObject(expected int64, actual object.Object) error {
 	}
 	return nil
 }
-
-

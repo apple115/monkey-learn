@@ -34,6 +34,11 @@ const (
 	OpNotEqual
 	//OpGreaterThan >  <
 	OpGreaterThan
+
+	// -
+	OpMinus
+	// !
+	OpBang
 )
 
 // 定义：名字 操作符占用字符数
@@ -54,6 +59,8 @@ var definitions = map[Opcode]*Definition{
 	OpEqual:       {"OpEqual", []int{}},
 	OpNotEqual:    {"OpNotEqual", []int{}},
 	OpGreaterThan: {"OpGreaterThan", []int{}},
+	OpMinus:       {"OpMinus", []int{}},
+	OpBang:        {"OpBang", []int{}},
 }
 
 // Lookup ...

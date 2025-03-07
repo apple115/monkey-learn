@@ -37,7 +37,20 @@ func (c *Compiler) Compile(node ast.Node) error {
 		if err != nil {
 			return err
 		}
+		c.emit(code.OpPop)
 	case *ast.InfixExpression:
+		if node.Operator == "<" {
+			err := c.Compile(node.Right)
+			if err != nil {
+				return err
+			}
+			err = c.Compile(node.Left)
+			if err != nil {
+				return err
+			}
+			c.emit(code.OpGreaterThan)
+			return nil
+		}
 		err := c.Compile(node.Left)
 		if err != nil {
 			return err
@@ -46,16 +59,34 @@ func (c *Compiler) Compile(node ast.Node) error {
 		if err != nil {
 			return err
 		}
-		switch node.Operator{
+		switch node.Operator {
 		case "+":
-		c.emit(code.OpAdd)
+			c.emit(code.OpAdd)
+		case "-":
+			c.emit(code.OpSub)
+		case "*":
+			c.emit(code.OpMul)
+		case "/":
+			c.emit(code.OpDiv)
+		case ">":
+			c.emit(code.OpGreaterThan)
+		case "==":
+			c.emit(code.OpEqual)
+		case "!=":
+			c.emit(code.OpNotEqual)
 		default:
-		return fmt.Errorf("unknown operator %s",node.Operator)
+			return fmt.Errorf("unknown operator %s", node.Operator)
 		}
 	case *ast.IntegerLiteral:
 		//TOOD
 		integer := &object.Integer{Value: node.Value}
-		c.emit(code.OpConstant,c.addConstant(integer))
+		c.emit(code.OpConstant, c.addConstant(integer))
+	case *ast.Boolean:
+		if node.Value {
+			c.emit(code.OpTrue)
+		} else {
+			c.emit(code.OpFalse)
+		}
 	}
 
 	return nil
@@ -75,10 +106,9 @@ type Bytecode struct {
 	Constants    []object.Object
 }
 
-
-//生成指令并将其添加到最终结果
-func (c *Compiler) emit(op code.Opcode,operands ...int) int  {
-	ins := code.Make(op,operands...)
+// 生成指令并将其添加到最终结果
+func (c *Compiler) emit(op code.Opcode, operands ...int) int {
+	ins := code.Make(op, operands...)
 	pos := c.addInstruction(ins)
 	return pos
 }

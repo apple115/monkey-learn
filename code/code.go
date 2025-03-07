@@ -16,6 +16,24 @@ const (
 	OpConstant Opcode = iota
 	//OpAdd 是一个操作码，用于表示加法操作
 	OpAdd
+	//OpSub 是一个操作码，用于表示减法操作
+	OpSub
+	//OpMul 是一个操作码，用于表示乘法操作
+	OpMul
+	//OpDiv 是一个操作码，用于表示除法操作
+	OpDiv
+	//OpPop 将栈定的抛出
+	OpPop
+	//OpTrue
+	OpTrue
+	//OpFalse
+	OpFalse
+	//OpEqual ==
+	OpEqual
+	//OpNotEqual !=
+	OpNotEqual
+	//OpGreaterThan >  <
+	OpGreaterThan
 )
 
 // 定义：名字 操作符占用字符数
@@ -25,8 +43,17 @@ type Definition struct {
 }
 
 var definitions = map[Opcode]*Definition{
-	OpConstant: {"OpConstant", []int{2}},
-	OpAdd:      {"OpAdd", []int{}},
+	OpConstant:    {"OpConstant", []int{2}},
+	OpAdd:         {"OpAdd", []int{}},
+	OpPop:         {"OpPop", []int{}},
+	OpSub:         {"OpSub", []int{}},
+	OpMul:         {"OpMul", []int{}},
+	OpDiv:         {"OpDiv", []int{}},
+	OpTrue:        {"OpTrue", []int{}},
+	OpFalse:       {"OpFalse", []int{}},
+	OpEqual:       {"OpEqual", []int{}},
+	OpNotEqual:    {"OpNotEqual", []int{}},
+	OpGreaterThan: {"OpGreaterThan", []int{}},
 }
 
 // Lookup ...
@@ -40,6 +67,8 @@ func Lookup(op byte) (*Definition, error) {
 }
 
 // Make 是一个函数，用于生成字节码指令
+// op 是一个操作码，用于表示不同的操作
+// operands 是一个整数切片，用于表示操作数
 func Make(op Opcode, operands ...int) []byte {
 	def, ok := definitions[op]
 	if !ok {

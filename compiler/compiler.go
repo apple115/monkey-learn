@@ -37,6 +37,15 @@ func New() *Compiler {
 
 }
 
+func NewWithState(s *SymbolTable, constants []object.Object) *Compiler {
+	compiler := New()
+	compiler.symbolTable = s
+	compiler.constants = constants
+	return compiler
+}
+
+
+
 // Compile ...
 // 递归遍历AST、找到*ast.IntegerLiterals、对其进行求值并将其转换为*object.Integers、将它们添加到常量字段、最后将OpConstant指令添加到内部的Instructions切片
 func (c *Compiler) Compile(node ast.Node) error {

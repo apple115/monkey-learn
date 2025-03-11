@@ -160,6 +160,5 @@ func TestConditionals(t *testing.T) {
 		{"if(false){ 10 }", Null},
 		{"if ((if (false) { 10 })) { 10 } else { 20 }", 20},
 	}
-
 	runVmTests(t, tests)
 }

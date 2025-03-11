@@ -47,6 +47,9 @@ const (
 	//虚拟机跳转到指令的偏移量处。
 	OpJump
 	OpNull
+
+	OpGetGlobal
+	OpSetGlobal
 )
 
 // 定义：名字 操作符占用字符数
@@ -72,6 +75,8 @@ var definitions = map[Opcode]*Definition{
 	OpJumpNotTruthy: {"OpJumpNotTruthy", []int{2}},
 	OpJump:          {"OpJump", []int{2}},
 	OpNull:          {"OpNull", []int{}},
+	OpGetGlobal:     {"OpGetGlobal", []int{2}},
+	OpSetGlobal:     {"OpSetGlobal", []int{2}},
 }
 
 // Lookup ...

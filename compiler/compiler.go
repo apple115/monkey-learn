@@ -44,8 +44,6 @@ func NewWithState(s *SymbolTable, constants []object.Object) *Compiler {
 	return compiler
 }
 
-
-
 // Compile ...
 // 递归遍历AST、找到*ast.IntegerLiterals、对其进行求值并将其转换为*object.Integers、将它们添加到常量字段、最后将OpConstant指令添加到内部的Instructions切片
 func (c *Compiler) Compile(node ast.Node) error {
@@ -155,6 +153,9 @@ func (c *Compiler) Compile(node ast.Node) error {
 	case *ast.IntegerLiteral:
 		integer := &object.Integer{Value: node.Value}
 		c.emit(code.OpConstant, c.addConstant(integer))
+	case *ast.StringLiteral:
+		str := &object.String{Value:node.Value}
+		c.emit(code.OpConstant, c.addConstant(str))
 	case *ast.Boolean:
 		if node.Value {
 			c.emit(code.OpTrue)

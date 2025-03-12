@@ -50,6 +50,8 @@ const (
 
 	OpGetGlobal
 	OpSetGlobal
+
+	OpArray
 )
 
 // 定义：名字 操作符占用字符数
@@ -77,6 +79,7 @@ var definitions = map[Opcode]*Definition{
 	OpNull:          {"OpNull", []int{}},
 	OpGetGlobal:     {"OpGetGlobal", []int{2}},
 	OpSetGlobal:     {"OpSetGlobal", []int{2}},
+	OpArray:         {"OpArrey", []int{2}},
 }
 
 // Lookup ...

@@ -56,6 +56,12 @@ const (
 	OpHash
 
 	OpIndex
+
+	OpCall
+
+	OpReturnValue
+
+	OpReturn
 )
 
 // 定义：名字 操作符占用字符数
@@ -86,6 +92,9 @@ var definitions = map[Opcode]*Definition{
 	OpArray:         {"OpArrey", []int{2}},
 	OpHash:          {"OpHash", []int{2}},
 	OpIndex:         {"OpIndex", []int{}},
+	OpCall:          {"OpCall", []int{}},
+	OpReturnValue:   {"OpReturnValue", []int{}},
+	OpReturn:        {"OpReturn", []int{}},
 }
 
 // Lookup ...

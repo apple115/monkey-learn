@@ -61,6 +61,7 @@ const (
 
 	OpReturnValue
 
+	//如果没有返回的OpReturnValue 就添加一个OpReturn
 	OpReturn
 )
 

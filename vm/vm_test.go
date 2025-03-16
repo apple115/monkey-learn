@@ -266,3 +266,84 @@ func TestIndexExpressions(t *testing.T) {
 
     runVmTests(t, tests)
 }
+
+// 字节码的Constant字段现在可以包含*object.CompiledFunction。
+//当遇到OpCall指令时，需要执行位于栈顶的*object.CompiledFunction指令，而遇到OpReturnValue或OpReturn时则不同。
+//如果遇到OpReturnValue，需要保留栈顶的值，即返回值。
+//然后，必须从栈中删除刚刚执行的*object.CompiledFunction并用保存的返回值（如果有）替换它。
+
+func TestCallingFunctionsWithoutArguments(t *testing.T) {
+    tests := []vmTestCase{
+        {
+            input: `
+        let fivePlusTen = fn() { 5 + 10; };
+        fivePlusTen();
+        `,
+            expected: 15,
+        },
+        {
+            input: `
+        let one = fn() { 1; };
+        let two = fn() { 2; };
+        one() + two()
+        `,
+            expected: 3,
+        },
+        {
+            input: `
+        let a = fn() { 1 };
+        let b = fn() { a() + 1 };
+        let c = fn() { b() + 1 };
+        c();
+        `,
+            expected: 3,
+        },
+    }
+
+    runVmTests(t, tests)
+}
+
+func TestFunctionsWithReturnStatement(t *testing.T) {
+    tests := []vmTestCase{
+        {
+            input: `
+        let earlyExit = fn() { return 99; 100; };
+        earlyExit();
+        `,
+            expected: 99,
+        },
+        {
+            input: `
+        let earlyExit = fn() { return 99; return 100; };
+        earlyExit();
+        `,
+            expected: 99,
+        },
+    }
+
+    runVmTests(t, tests)
+}
+// vm/vm_test.go
+
+func TestFunctionsWithoutReturnValue(t *testing.T) {
+    tests := []vmTestCase{
+        {
+            input: `
+        let noReturn = fn() { };
+        noReturn();
+        `,
+            expected: Null,
+        },
+        {
+            input: `
+        let noReturn = fn() { };
+        let noReturnTwo = fn() { noReturn(); };
+        noReturn();
+        noReturnTwo();
+        `,
+            expected: Null,
+        },
+    }
+
+    runVmTests(t, tests)
+}

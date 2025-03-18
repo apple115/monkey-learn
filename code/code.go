@@ -63,6 +63,9 @@ const (
 
 	//如果没有返回的OpReturnValue 就添加一个OpReturn
 	OpReturn
+
+	OpGetLocal
+	OpSetLocal
 )
 
 // 定义：名字 操作符占用字符数
@@ -96,6 +99,8 @@ var definitions = map[Opcode]*Definition{
 	OpCall:          {"OpCall", []int{}},
 	OpReturnValue:   {"OpReturnValue", []int{}},
 	OpReturn:        {"OpReturn", []int{}},
+	OpGetLocal:      {"OpGetLocal", []int{1}},
+	OpSetLocal:      {"OpSetLocal", []int{1}},
 }
 
 // Lookup ...
@@ -124,13 +129,14 @@ func Make(op Opcode, operands ...int) []byte {
 	instruction[0] = byte(op)
 
 	offset := 1
-
 	for i, o := range operands {
 		width := def.OperandWidths[i]
 		switch width {
 		case 2:
 			// 如果操作数宽度为 2 字节，使用大端字节序将操作数转换为 16 位无符号整数并存储到字节切片中
 			binary.BigEndian.PutUint16(instruction[offset:], uint16(o))
+		case 1:
+			instruction[offset] = byte(o)
 		}
 		offset += width
 	}
@@ -179,8 +185,9 @@ func ReadOperands(def *Definition, ins Instructions) ([]int, int) {
 		switch width {
 		case 2:
 			operands[i] = int(ReadUint16(ins[offset:]))
+		case 1:
+			operands[i] = int(ReadUint8(ins[offset:]))
 		}
-
 		offset += width
 	}
 	return operands, offset
@@ -189,4 +196,8 @@ func ReadOperands(def *Definition, ins Instructions) ([]int, int) {
 // ReadUint16 是一个函数，用于将字节切片转换为 16 位无符号整数
 func ReadUint16(ins Instructions) uint16 {
 	return binary.BigEndian.Uint16(ins)
+}
+
+func ReadUint8(ins Instructions) uint8 {
+	return uint8(ins[0])
 }

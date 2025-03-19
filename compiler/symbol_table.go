@@ -19,6 +19,7 @@ type Symbol struct {
 type SymbolTable struct {
 	Outer          *SymbolTable
 	store          map[string]Symbol
+	//多少个绑定
 	numDefinitions int
 }
 

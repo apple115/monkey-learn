@@ -277,6 +277,7 @@ func (m *Macro) Inspect() string {
 type CompiledFunction struct {
 	Instructions code.Instructions
 	NumLocals int
+	NumParameters int
 }
 
 func (cf *CompiledFunction) Type()ObjectType  {
@@ -286,3 +287,5 @@ func (cf *CompiledFunction) Type()ObjectType  {
 func (cf *CompiledFunction) Inspect() string {
 	return fmt.Sprintf("CompiledFunction[%p]", cf)
 }
+
+

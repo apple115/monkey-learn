@@ -66,6 +66,8 @@ const (
 
 	OpGetLocal
 	OpSetLocal
+
+	OpGetBuiltin
 )
 
 // 定义：名字 操作符占用字符数
@@ -101,6 +103,7 @@ var definitions = map[Opcode]*Definition{
 	OpReturn:        {"OpReturn", []int{}},
 	OpGetLocal:      {"OpGetLocal", []int{1}},
 	OpSetLocal:      {"OpSetLocal", []int{1}},
+    OpGetBuiltin: {"OpGetBuiltin",[]int{1}},
 }
 
 // Lookup ...

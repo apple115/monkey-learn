@@ -26,6 +26,8 @@ const (
 	MACRO_OBJ        = "MACRO"
 
 	COMPILED_FUNCTION_OBJ = "COMPILED_FUNCTION_OBJ"
+
+	CLOSURE_OBJ = "CLOSURE"
 )
 
 type Object interface {
@@ -249,38 +251,37 @@ func (q *Quote) Inspect() string {
 }
 
 type Macro struct {
-    Parameters []*ast.Identifier
-    Body       *ast.BlockStatement
-    Env        *Environment
+	Parameters []*ast.Identifier
+	Body       *ast.BlockStatement
+	Env        *Environment
 }
 
 func (m *Macro) Type() ObjectType { return MACRO_OBJ }
 func (m *Macro) Inspect() string {
-    var out bytes.Buffer
+	var out bytes.Buffer
 
-    params := []string{}
-    for _, p := range m.Parameters {
-        params = append(params, p.String())
-    }
+	params := []string{}
+	for _, p := range m.Parameters {
+		params = append(params, p.String())
+	}
 
-    out.WriteString("macro")
-    out.WriteString("(")
-    out.WriteString(strings.Join(params, ", "))
-    out.WriteString(") {\n")
-    out.WriteString(m.Body.String())
-    out.WriteString("\n}")
+	out.WriteString("macro")
+	out.WriteString("(")
+	out.WriteString(strings.Join(params, ", "))
+	out.WriteString(") {\n")
+	out.WriteString(m.Body.String())
+	out.WriteString("\n}")
 
-    return out.String()
+	return out.String()
 }
 
-
 type CompiledFunction struct {
-	Instructions code.Instructions
-	NumLocals int
+	Instructions  code.Instructions
+	NumLocals     int
 	NumParameters int
 }
 
-func (cf *CompiledFunction) Type()ObjectType  {
+func (cf *CompiledFunction) Type() ObjectType {
 	return COMPILED_FUNCTION_OBJ
 }
 
@@ -288,4 +289,15 @@ func (cf *CompiledFunction) Inspect() string {
 	return fmt.Sprintf("CompiledFunction[%p]", cf)
 }
 
+type Closure struct {
+	Fn   *CompiledFunction
+	Free []Object
+}
 
+func (c *Closure) Type() ObjectType {
+	return CLOSURE_OBJ
+}
+
+func (c *Closure) Inspect() string {
+	return fmt.Sprintf("Closure[%p]", c)
+}

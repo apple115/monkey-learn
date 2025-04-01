@@ -73,6 +73,8 @@ const (
 	OpClosure
 
 	OpGetFree
+
+	OpCurrentClosure
 )
 
 // 定义：名字 操作符占用字符数
@@ -111,6 +113,7 @@ var definitions = map[Opcode]*Definition{
 	OpGetBuiltin:    {"OpGetBuiltin", []int{1}},
 	OpClosure:       {"OpClosure", []int{2, 1}},
 	OpGetFree:       {"OpGetFree", []int{1}},
+	OpCurrentClosure: {"OpCurrentClosure",[]int{}},
 }
 
 // Lookup ...

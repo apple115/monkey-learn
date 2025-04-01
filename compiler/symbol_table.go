@@ -7,6 +7,7 @@ const (
 	GlobalScope  SymbolScope = "GLOBAL"
 	BuiltinScope SymbolScope = "BUTLTIN"
 	FreeScope    SymbolScope = "FREE"
+	FunctionScope SymbolScope = "FUNCTION"
 )
 
 type Symbol struct {
@@ -78,5 +79,16 @@ func (s *SymbolTable) defineFree(original Symbol) Symbol {
 	symbol := Symbol{Name: original.Name, Index: len(s.FreeSymbols) - 1}
 	symbol.Scope = FreeScope
 	s.store[original.Name] = symbol
+	return symbol
+}
+
+
+func (s *SymbolTable) DefineFunctionName(name string) Symbol {
+	symbol := Symbol{
+		Name:name,
+		Index: 0,
+		Scope: FunctionScope,
+	}
+	s.store[name] = symbol
 	return symbol
 }
